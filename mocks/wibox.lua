@@ -66,11 +66,11 @@ local textbox = {}
 
 --- textbox:new -- {{{
 -- 
-function textbox:new (text)
+function textbox.new (t, text)
    return text
 end
 
-setmetatable(textbox, {__call=function(...) return textbox:new(...) end})
+setmetatable(textbox, {__call=function (...) return textbox.new(...) end})
 -- }}}
 
 -- }}}

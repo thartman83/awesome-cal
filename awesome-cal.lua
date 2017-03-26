@@ -30,8 +30,7 @@ local textbox     = require("wibox"    ).widget.textbox
 local setmetatable = setmetatable
 local tonum = tonumber
 local tostr = tostring
-local awesome_cal = {}
-local days = {"Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"}
+local awesome_cal = { day_labels = {"Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"} }
 local day_sec = 86400
 -- }}}
 
@@ -78,7 +77,7 @@ end
 function awesome_cal:build_cal_widget ()
    -- Calendar header
    local hlayout = layout.flex.horizontal()
-   for i,v in ipairs(days) do
+   for i,v in ipairs(self.day_labels) do
       hlayout:add(textbox(v))
    end
 

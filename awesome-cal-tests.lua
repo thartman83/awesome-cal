@@ -96,19 +96,124 @@ describe("awesome_cal tests", function ()
   describe("awesome_cal:build_cal_widget tests", function()
     local ac = require("awesome-cal")
 
+    --- build_cal_widget for unix epoch -- {{{        
     it("should return a 6 row table with seven cols for unix epoch", function ()
       ac.date = os.date("*t", os.time({day=1, month=1, year=1970}))
 
+      -- Test the correct number of rows
       local w = ac:build_cal_widget()
       assert.are.equal(6, table.getn(w:children()))
       
       for i,v in ipairs(w) do
          assert.are.equal(7, table.getn(v:children()))
+      end
+
+      -- Test that the header and squares are correct
+      local hr = w:children()[1]
+      for i, v in ipairs(ac.day_labels) do
+         assert.are.equal(v, hr[i])
+      end
+
+      -- Test that the blanks and days are properly listed in the
+      -- first non header row
+      local r = w:children()[2]
+      for i, v in ipairs(r) do
+         if i <= 4 then
+            assert.are.equal("  ", v)
+         else
+            assert.are.equal(tostring(i-4), v)
+         end
+      end
+
+      -- Test the 2nd row (4-10)
+      r = w:children()[3]
+      for i,v in ipairs(r) do
+         assert.are.equal(tostring(i+3), v)         
+      end
+
+      -- And the 3rd row (11-17)
+      r = w:children()[4]
+      for i,v in ipairs(r) do
+         assert.are.equal(tostring(i+10),v)
+      end
+
+      -- 4th row (18-24)
+      r = w:children()[5]
+      for i,v in ipairs(r) do
+         assert.are.equal(tostring(i+17),v)
+      end
+
+      -- 5th row (25-31 w/ no blanks)
+      r = w:children()[6]
+      for i,v in ipairs(r) do
+         assert.are.equal(tostring(i+24),v)
+      end
+    end)
+    -- }}}
+
+    --- build_cal_widget for 3/25/2017 -- {{{
+    it("should return 6 rows and 7 col table for 3/25/2017", function()
+      ac.date = os.date("*t", os.time({day=25, month=3, year=2017}))
+
+      local w = ac:build_cal_widget()
+
+      -- Test the correct number of rows
+      local w = ac:build_cal_widget()
+      assert.are.equal(6, table.getn(w:children()))
+      
+      for i,v in ipairs(w) do
+         assert.are.equal(7, table.getn(v:children()))
+      end
+
+      -- Test that the header and squares are correct
+      local hr = w:children()[1]
+      for i, v in ipairs(ac.day_labels) do
+         assert.are.equal(v, hr[i])
+      end
+
+      -- Test that the blanks and days are properly listed in the
+      -- first non header row
+      local r = w:children()[2]
+      for i, v in ipairs(r) do
+         if i <= 3 then
+            assert.are.equal("  ", v)
+         else
+            assert.are.equal(tostring(i-3), v)
+         end
+      end
+
+      -- Test the 2nd row (5-11)
+      r = w:children()[3]
+      for i,v in ipairs(r) do
+         assert.are.equal(tostring(i+4), v)         
+      end
+
+      -- And the 3rd row (12-18)
+      r = w:children()[4]
+      for i,v in ipairs(r) do
+         assert.are.equal(tostring(i+11),v)
+      end
+
+      -- 4th row (19-25)
+      r = w:children()[5]
+      for i,v in ipairs(r) do
+         assert.are.equal(tostring(i+18),v)
+      end
+
+      -- 5th row (26-31 w/ 1 blanks)
+      r = w:children()[6]
+      for i,v in ipairs(r) do
+         if i <= 6 then
+            assert.are.equal(tostring(i+25),v)
+         else
+            assert.are.equal("  ", v)
+         end
       end      
     end)
+    -- }}}
   end)
   -- }}}
-  
+
 end)
 
 -- }}}
