@@ -21,17 +21,24 @@
 --- awesome-cal -- {{{
 
 --- Requires and Locals -- {{{
+--- Requires -- {{{
 local os          = require("os"       )
 local layout      = require("wibox"    ).layout
 local textbox     = require("wibox"    ).widget.textbox
---local awful     = require("awful"    )
---local beautiful = require("beautiful")
+local awful       = require("awful"    )
+local beautiful   = require("beautiful")
+local radical     = require("radical"  )
+-- }}}
 
+--- Locals -- {{{
 local setmetatable = setmetatable
 local tonum = tonumber
 local tostr = tostring
-local awesome_cal = { day_labels = {"Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"} }
-local day_sec = 86400
+local awesome_cal = { day_labels = {"Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"},
+                      spacer = "",
+                      day_sec = 86400,
+                    }
+-- }}}
 -- }}}
 
 --- awesome_cal:month_info -- {{{
@@ -41,7 +48,7 @@ function awesome_cal:month_info (date)
    local beg_month = os.date("*t", os.time({ day = 1, month = d.month,
                                              year = d.year }))
    local end_month = os.date("*t", os.time({ day = 1, month = d.month + 1,
-                                             year = d.year}) - day_sec)
+                                             year = d.year}) - self.day_sec)
    local beg_offset = beg_month.wday-1
    local end_offset = 7 - end_month.wday
    if end_offset == 7 then
@@ -107,12 +114,22 @@ function awesome_cal:build_cal_widget ()
 end
 -- }}}
 
+--- awesome_cal:popup -- {{{
+-- 
+function awesome_cal:popup ()
+   local w = self:build_cal_widget()
+   local m = radical:context{layout=radical.layout.grid,
+                             column=table.getn(self.day_labels)}
+   
+end
+-- }}}
+
 --- Constructors -- {{{
 
 --- new -- {{{
 -- 
-function new (date, ...)
-   local date = date or os.date("*t",t)
+function awesome_cal.new (date, ...)
+
 end
 -- }}}
 
