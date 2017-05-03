@@ -19,5 +19,5 @@
 -- }}}
 
 --- init -- {{{
-return require('awesome-cal')
+return require('awesome-cal/awesome-cal')
 -- }}}
