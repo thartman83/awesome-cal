@@ -35,6 +35,10 @@ local setmetatable = setmetatable
 local tonum = tonumber
 local tostr = tostring
 local awesome_cal = { day_labels = {"Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"},
+                      month_labels = {"January", "Febuary", "March", "April",
+                                      "May", "June", "July", "August",
+                                      "September", "October", "November",
+                                      "Decemeber"},
                       spacer = "",
                       day_sec = 86400,
                     }
@@ -114,27 +118,57 @@ function awesome_cal:build_cal_widget ()
 end
 -- }}}
 
---- awesome_cal:popup -- {{{
--- 
-function awesome_cal:popup ()
-   local w = self:build_cal_widget()
-   local m = radical:context{layout=radical.layout.grid,
-                             column=table.getn(self.day_labels)}
-   
+--- awesome_cal:month_menu -- {{{
+--
+
+function awesome_cal:month_menu(date)
+   local date = date or os.date("*t",t)
+   local beg_month_offset, end_month, end_month_offset = self:month_info(date)
+   local days = self:day_list(beg_month_offset, end_month, end_month_offset)
+   local m_days = {}
+   local week = {}
+
+   for i,v in ipairs(days) do
+      table.insert(week, v)
+      
+      if i % 7 == 0 then
+         table.insert(m_days, week)
+         week = {}
+      end
+   end
+
+   local mtab, mtab_vals = radical.widgets.table(m_days,
+                                                 {row_count = #m_days,
+                                                  col_count = #self.day_labels,
+                                                  h_header = self.day_labels})
+
+   -- Find the current date and bold it
+   local r_index = math.floor(((date.day + beg_month_offset - 1) / #self.day_labels)) + 1
+   local c_index = ((date.day + beg_month_offset - 1) % #self.day_labels) + 1
+
+   local text = mtab_vals[r_index][c_index].text
+   mtab_vals[r_index][c_index]:set_markup("<span weight='bold'>" .. text .. "</span>")
+
+
+   -- Build the actual radical menu
+   local menu = radical.context{style = radical.style.classic}
+   menu:add_widget(mtab)
+   return menu, mtab_vals
 end
+
 -- }}}
 
 --- Constructors -- {{{
 
 --- new -- {{{
--- 
-function awesome_cal.new (date, ...)
+--
+function awesome_cal:new(args)
 
 end
 -- }}}
 
 -- }}}
 
+--return setmetatable(awesome_cal, {__call=function (_, ...) return awesome_cal:new(...) end})
 return awesome_cal
-
 -- }}}
